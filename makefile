@@ -1,4 +1,4 @@
-compile: server client
+compile: server client fserver
 
 server: server.c pipe_networking.c
 	gcc server.c pipe_networking.c -o server
@@ -6,6 +6,9 @@ server: server.c pipe_networking.c
 client: client.c pipe_networking.c
 	gcc client.c pipe_networking.c -o client
 
+fserver: fserver.c pipe_networking.c
+	gcc fserver.c pipe_networking.c -o fserver
+
 clean:
-	rm -f server client
+	rm -f server client fserver
 	rm *~

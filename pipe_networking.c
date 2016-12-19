@@ -57,3 +57,37 @@ int client_handshake(int *to_server) {
   
   return clientfifo;
 }
+
+int server_handshake1(char *buffer){
+  // Making the Well Known Pipe
+  int fifo = mkfifo(wkp, 0644);
+    
+  // Error checking 
+  if (fifo >= 0){
+    printf("[SERVER] Created WKP... \n");
+  }
+  else{
+    printf("[SERVER] Error: %s\n", strerror(errno));
+  }
+
+  int wkpfd = open(wkp, O_RDONLY);
+  read(wkpfd, buffer, sizeof(buffer));
+  remove(wkp);
+  printf("[SERVER] Received private FIFO name: %s\n", buffer);
+
+  return wkpfd;
+}
+
+int server_handshake2(char *buffer, int from_client){
+  int pfifo = open(buffer, O_WRONLY);
+  printf("[SERVER] connected to client's WKP\n");
+  write(pfifo, "connected to client WKP", 23);
+    
+  //receive client's message, verifying connection
+  char msg2[MESSAGE_BUFFER_SIZE];
+  read(from_client, msg2, MESSAGE_BUFFER_SIZE);
+  printf("[SERVER] Received client response: %s\n", msg2);
+  
+  return pfifo;
+}
+  
